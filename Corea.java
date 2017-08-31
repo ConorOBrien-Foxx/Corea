@@ -41,8 +41,12 @@ public class Corea {
         stack.add(x.toString());
     }
     
+    public String pop(int x) {
+        return stack.remove(x);
+    }
+    
     public String pop() {
-        return stack.remove(stack.size() - 1);
+        return pop(stack.size() - 1);
     }
     
     public static String mirrorHorizontal(String s) {
@@ -63,6 +67,19 @@ public class Corea {
     
     public static String reverseString(String s) {
         return new StringBuilder(s).reverse().toString();
+    }
+    
+    public static char firstCharNotInStr(String s, String charset) {
+        for(int i = 0; i < charset.length(); i++) {
+            char it = charset.charAt(i);
+            if(s.indexOf(it) == -1) {
+                return it;
+            }
+        }
+        return '\1';
+    }
+    public static char firstCharNotInStr(String s) {
+        return firstCharNotInStr(s, "!#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~");
     }
     
     public static String mirrorVertical(String s) {
@@ -212,7 +229,7 @@ public class Corea {
             }
             
             else if(cmd == 'F') {
-                char field = cmds.charAt(++i);
+                char field = i + 1 < cmds.length() ? cmds.charAt(++i) : 'V';
                 fields.put(field, pop());
             }
             
@@ -294,6 +311,14 @@ public class Corea {
                 i = pushString(cmds, i, delim);
             }
             
+            else if(cmd == 'p') {
+                push(" ");
+            }
+            
+            else if(cmd == 'n') {
+                push("\n");
+            }
+            
             else if(cmd == '+') {
                 String a, b;
                 b = pop();
@@ -354,14 +379,27 @@ public class Corea {
             }
             
             else if(cmd == 'z') {
-                for(String s : stack.toArray(new String[stack.size()])) {
-                    System.out.println(s);
+                System.out.println("Stack [");
+                for(int j = 0; j < stack.size(); j++) {
+                    System.out.println("  ```" +  stack.get(j) + "```");
                 }
+                System.out.println("]");
+                
+                // String[] 
+                // for(String s : stack.toArray(new String[stack.size()])) {
+                    // System.out.print(s);
+                // }
             }
             
             else if(cmd == '|') {
                 char next = cmds.charAt(++i);
                 contents += next;
+            }
+            
+            else if(cmd == '#') {
+                char auto = firstCharNotInStr(contents);
+                System.err.println("Auto: " + auto);
+                executeSequence("F" + auto);
             }
             
             else if(cmd == '(') {
@@ -370,6 +408,14 @@ public class Corea {
             
             else if(cmd == ')') {
                 executeSequence("1+");
+            }
+            
+            else if(cmd == '{') {
+                stack.add(0, pop());
+            }
+            
+            else if(cmd == '}') {
+                push(pop(0));
             }
             
             else if(cmd == '.') {
