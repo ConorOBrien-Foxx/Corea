@@ -8,6 +8,7 @@ import java.io.*;
 import java.math.BigInteger;
 import java.util.Scanner;
 import java.util.HashMap;
+import java.util.Collections;
 
 public class Corea {
     String contents = "";
@@ -231,6 +232,16 @@ public class Corea {
             else if(cmd == 'F') {
                 char field = i + 1 < cmds.length() ? cmds.charAt(++i) : 'V';
                 fields.put(field, pop());
+            }
+            
+            else if(cmd == 't') {
+                char next = cmds.charAt(++i);
+                executeSequence("<@" + next + ">");
+            }
+            
+            else if(cmd == 'T') {
+                String toExec = pop();
+                executeSequence("<@" + toExec + ">");
             }
             
             else if(cmd == 'f') {
@@ -477,7 +488,10 @@ public class Corea {
         return contents;
     }
     
+    
+    
     public static void main(String args[]) {
+        // System.out.println(HuffmanTree.getOrderedFrequencies("Hello, World!"));
         if(args.length == 0) {
             System.err.println("Error: insufficient arguments given.");
             System.exit(-1);
