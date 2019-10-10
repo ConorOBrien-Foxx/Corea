@@ -47,6 +47,9 @@ public class Corea {
     }
     
     public String pop() {
+        if(stack.size() == 0) {
+            return input.nextLine();
+        }
         return pop(stack.size() - 1);
     }
     
@@ -135,6 +138,10 @@ public class Corea {
         return res.substring(1);
     }
     
+    public static BigInteger integer(String s) {
+        return new BigInteger(s.trim());
+    }
+    
     public int pushString(String source, int i, char delim) {
         String build = "";
         i++;
@@ -161,7 +168,7 @@ public class Corea {
             char cmd = cmds.charAt(i);
             if(Character.isDigit(cmd)) {
                 String build = "";
-                while(Character.isDigit(cmds.charAt(i))) {
+                while(i < cmds.length() && Character.isDigit(cmds.charAt(i))) {
                     build += cmds.charAt(i++);
                 }
                 --i;
@@ -205,12 +212,16 @@ public class Corea {
                 contents = "";
             }
             
-            else if(cmd == '>') {
+            else if(cmd == '>' || cmd == ';') {
                 contents += pop();
             }
             
             else if(cmd == 'i') {
                 push(input.nextLine());
+            }
+            
+            else if(cmd == 'I') {
+                push(Corea.integer(input.nextLine()));
             }
             
             else if(cmd == 'r') {
@@ -334,11 +345,11 @@ public class Corea {
                 String a, b;
                 b = pop();
                 a = pop();
-                push(new BigInteger(a).add(new BigInteger(b)));
+                push(Corea.integer(a).add(Corea.integer(b)));
             }
             
             else if(cmd == 'c') {
-                push("" + ((char) new BigInteger(pop()).intValue()));
+                push("" + ((char) Corea.integer(pop()).intValue()));
             }
             
             else if(cmd == 'C') {
@@ -349,21 +360,21 @@ public class Corea {
                 String a, b;
                 b = pop();
                 a = pop();
-                push(new BigInteger(a).subtract(new BigInteger(b)));
+                push(Corea.integer(a).subtract(Corea.integer(b)));
             }
             
             else if(cmd == '/') {
                 String a, b;
                 b = pop();
                 a = pop();
-                push(new BigInteger(a).divide(new BigInteger(b)));
+                push(Corea.integer(a).divide(Corea.integer(b)));
             }
             
             else if(cmd == '*') {
                 String a, b;
                 b = pop();
                 a = pop();
-                push(new BigInteger(a).multiply(new BigInteger(b)));
+                push(Corea.integer(a).multiply(Corea.integer(b)));
             }
             
             else if(cmd == 'h') {
@@ -382,7 +393,7 @@ public class Corea {
                 String f, n;
                 n = pop();
                 f = pop();
-                BigInteger k = new BigInteger(n);
+                BigInteger k = Corea.integer(n);
                 while(!k.equals(BigInteger.ZERO)) {
                     executeSequence(f);
                     k = k.subtract(BigInteger.ONE);
@@ -438,7 +449,15 @@ public class Corea {
                     push(str.replaceAll(".", "$0" + joiner));
                 }
             }
+            
+            else {
+                System.err.println("No such command: " + cmd);
+            }
         }
+    }
+    
+    public static boolean isSequenceTerminal(char c) {
+        return c == '"' || c == ';';
     }
     
     public void run(String s) {
@@ -452,10 +471,13 @@ public class Corea {
             if(i >= s.length())
                 break;
             start = ++i;
-            while(i < s.length() && s.charAt(i) != '"') {
+            while(i < s.length() && !Corea.isSequenceTerminal(s.charAt(i))) {
                 i++;
             }
-            executeSequence(s.substring(start, i));
+            int offset = 0;
+            if(s.charAt(i) == ';')
+                offset++;
+            executeSequence(s.substring(start, i + offset));
         }
     }
     
