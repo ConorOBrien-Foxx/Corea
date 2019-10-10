@@ -27,7 +27,7 @@ public class Corea {
             constants.put("2", "---");
             constants.put("3", "***");
             constants.put("4", "Hello, World!");
-            constants.put("5", "\"5C\"");
+            constants.put("5", "\"5C;");
             constants.put("6", "<>");
             constants.put("7", "[]");
             constants.put("8", "()");
