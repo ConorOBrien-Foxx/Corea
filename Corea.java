@@ -475,7 +475,7 @@ public class Corea {
                 i++;
             }
             int offset = 0;
-            if(s.charAt(i) == ';')
+            if(i < s.length() && s.charAt(i) == ';')
                 offset++;
             executeSequence(s.substring(start, i + offset));
         }
